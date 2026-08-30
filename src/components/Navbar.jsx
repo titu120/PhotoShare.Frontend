@@ -1,9 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getToken } from "../services/authService";
+
+function getCurrentUserId() {
+  const token = getToken();
+  if (!token) return null;
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || payload.sub;
+}
 
 function Navbar() {
   const { isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
+  const currentUserId = getCurrentUserId();
 
   const handleLogout = () => {
     logout();
@@ -20,6 +29,9 @@ function Navbar() {
             <Link to="/explore" className="navbar-link">Explore</Link>
             <Link to="/search" className="navbar-link">Search</Link>
             <Link to="/create" className="btn btn-primary">+ Post</Link>
+            {currentUserId && (
+              <Link to={`/profile/${currentUserId}`} className="navbar-link">Profile</Link>
+            )}
             <button onClick={handleLogout} className="btn btn-outline">Logout</button>
           </>
         ) : (
