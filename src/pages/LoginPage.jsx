@@ -9,23 +9,17 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      // authService.js এর loginUser function কল করা হচ্ছে
-      const data = await loginUser(email, password);
-
-      // এখন data এর ভেতরে accessToken আছে
-      // Step 14 এ এটাকে localStorage এ save করা শিখবো, আপাতত শুধু console এ দেখি
-      console.log("Login successful:", data);
-
-      navigate("/");  // Login সফল হলে Home page এ পাঠানো
-    } catch (err) {
-      setError("Email অথবা Password ভুল হয়েছে");
-    }
-  };
+  try {
+    await loginUser(email, password);
+    navigate("/");
+  } catch (err) {
+    setError("Email অথবা Password ভুল হয়েছে");
+  }
+};
 
   return (
     <div className="auth-page">
