@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { getPostById } from "../services/postService";
 import { getPostComments, createComment, deleteComment } from "../services/commentService";
 import { toggleLike } from "../services/likeService";
 import { timeAgo } from "../utils/timeAgo";
 import { getToken } from "../services/authService";
 
-// JWT Token থেকে বর্তমান user এর ID বের করার ছোট function
 function getCurrentUserId() {
   const token = getToken();
   if (!token) return null;
@@ -15,7 +14,7 @@ function getCurrentUserId() {
 }
 
 function PostDetailPage() {
-  const { id } = useParams();          // URL থেকে Post ID নেওয়া
+  const { id } = useParams();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -52,15 +51,14 @@ function PostDetailPage() {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-
     const created = await createComment(id, newComment);
-    setComments((prev) => [...prev, created]);   // নতুন Comment list এ যোগ
+    setComments((prev) => [...prev, created]);
     setNewComment("");
   };
 
   const handleDeleteComment = async (commentId) => {
     await deleteComment(commentId);
-    setComments((prev) => prev.filter((c) => c.id !== commentId));  // Delete হওয়া Comment বাদ
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
   };
 
   if (loading) return <div className="container"><p className="text-muted">Loading...</p></div>;
@@ -72,13 +70,17 @@ function PostDetailPage() {
         <img src={post.imageUrl} alt="post" className="post-image" />
         <div className="post-body">
           <p className="post-caption">{post.caption}</p>
-          <button
-            onClick={handleLikeClick}
-            className={`like-btn ${liked ? "liked" : ""}`}
-          >
+          <button onClick={handleLikeClick} className={`like-btn ${liked ? "liked" : ""}`}>
             {liked ? "❤️" : "🤍"} {likeCount}
           </button>
           <p className="text-muted post-time">{timeAgo(post.createdAt)}</p>
+
+          {/* শুধু নিজের Post হলে Edit বাটন দেখাবে */}
+          {post.userId === currentUserId && (
+            <Link to={`/posts/${post.id}/edit`} className="btn btn-outline edit-post-btn">
+              Edit করুন
+            </Link>
+          )}
         </div>
       </div>
 
