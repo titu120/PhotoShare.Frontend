@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,18 +9,20 @@ function LoginPage() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const { login } = useAuth();   // AuthContext থেকে login function নেওয়া হচ্ছে
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-  try {
-    await loginUser(email, password);
-    navigate("/");
-  } catch (err) {
-    setError("Email অথবা Password ভুল হয়েছে");
-  }
-};
+    try {
+      await loginUser(email, password);
+      login();          // Context কে জানানো হচ্ছে — "এখন থেকে isLoggedIn = true"
+      navigate("/");
+    } catch (err) {
+      setError("Email অথবা Password ভুল হয়েছে");
+    }
+  };
 
   return (
     <div className="auth-page">
