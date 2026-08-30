@@ -62,3 +62,14 @@ export const searchPosts = async (keyword) => {
   );
   return response.data;
 };
+
+// আগের সব function এর নিচে যোগ করুন
+
+export const getCombinedFeed = async (page = 1, pageSize = 10) => {
+  const token = getToken();
+  const response = await axios.get(
+    `${API_BASE_URL}/api/Posts/combined-feed?page=${page}&pageSize=${pageSize}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};

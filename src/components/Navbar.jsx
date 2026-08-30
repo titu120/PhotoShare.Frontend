@@ -3,10 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { getToken } from "../services/authService";
 
 function getCurrentUserId() {
-  const token = getToken();
-  if (!token) return null;
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || payload.sub;
+  try {
+    const token = getToken();
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || payload.sub;
+  } catch (err) {
+    return null;   // Token ভুল/অসম্পূর্ণ হলে, crash না করে শুধু null ফেরত
+  }
 }
 
 function Navbar() {

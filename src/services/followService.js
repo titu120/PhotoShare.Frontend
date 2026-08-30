@@ -33,3 +33,10 @@ export const getFollowing = async (userId) => {
   const response = await axios.get(`${API_BASE_URL}/api/Users/${userId}/following`);
   return response.data;
 };
+
+// আগের সব function এর নিচে যোগ করুন
+
+export const getSuggestedUsers = async (userId) => {
+  const response = await axios.get(`${API_BASE_URL}/api/Follow/${userId}/suggested`);
+  return response.data;
+};

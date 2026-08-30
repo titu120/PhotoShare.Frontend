@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,15 +10,23 @@ function LoginPage() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { login } = useAuth();   // AuthContext থেকে login function নেওয়া হচ্ছে
+  const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    // Frontend Validation
+    if (!email.trim() || !password.trim()) {
+      setError("সব field পূরণ করুন");
+      return;
+    }
+
     try {
       await loginUser(email, password);
-      login();          // Context কে জানানো হচ্ছে — "এখন থেকে isLoggedIn = true"
+      login();
+      showToast("Login সফল হয়েছে!");
       navigate("/");
     } catch (err) {
       setError("Email অথবা Password ভুল হয়েছে");
@@ -39,7 +48,6 @@ function LoginPage() {
             className="form-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
           <input
             type="password"
@@ -47,7 +55,6 @@ function LoginPage() {
             className="form-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
 
           <button type="submit" className="btn btn-primary auth-submit">
