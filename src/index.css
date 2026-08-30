@@ -185,3 +185,27 @@ input, textarea {
   font-size: 14px;
   margin-bottom: var(--spacing-md);
 }
+
+/* ==========================================
+   Navbar
+   ========================================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.navbar-links {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
