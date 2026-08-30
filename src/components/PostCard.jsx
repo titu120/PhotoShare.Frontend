@@ -1,4 +1,22 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { toggleLike } from "../services/likeService";
+import { timeAgo } from "../utils/timeAgo";
+
 function PostCard({ post }) {
+  const [liked, setLiked] = useState(post.isLikedByCurrentUser || false);
+  const [likeCount, setLikeCount] = useState(post.likeCount || 0);
+
+  const handleLikeClick = async () => {
+    try {
+      const result = await toggleLike(post.id);
+      setLiked(result.liked);
+      setLikeCount((prev) => (result.liked ? prev + 1 : prev - 1));
+    } catch (err) {
+      console.error("Like দিতে সমস্যা হয়েছে", err);
+    }
+  };
+
   return (
     <div className="post-card card">
       <div className="post-header">
@@ -10,14 +28,26 @@ function PostCard({ post }) {
         <span className="post-author">{post.authorUsername || post.userId}</span>
       </div>
 
-      <img src={post.imageUrl} alt="post" className="post-image" />
+      <Link to={`/posts/${post.id}`}>
+        <img src={post.imageUrl} alt="post" className="post-image" />
+      </Link>
 
       <div className="post-body">
         <p className="post-caption">{post.caption}</p>
-        <div className="post-stats">
-          <span>❤️ {post.likeCount}</span>
-          <span>💬 {post.commentCount}</span>
+
+        <div className="post-actions">
+          <button
+            onClick={handleLikeClick}
+            className={`like-btn ${liked ? "liked" : ""}`}
+          >
+            {liked ? "❤️" : "🤍"} {likeCount}
+          </button>
+          <Link to={`/posts/${post.id}`} className="comment-btn">
+            💬 {post.commentCount || 0}
+          </Link>
         </div>
+
+        <p className="text-muted post-time">{timeAgo(post.createdAt)}</p>
       </div>
     </div>
   );
